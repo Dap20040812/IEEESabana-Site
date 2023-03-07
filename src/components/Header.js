@@ -62,7 +62,7 @@ const Logo = styled.img `
     cursor: pointer;
     width: 80%;
     @media (max-width: 800px) {
-        width: 100%;
+        width: 170%;
     }
 `
 

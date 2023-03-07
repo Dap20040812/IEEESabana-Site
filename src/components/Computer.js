@@ -128,11 +128,12 @@ function Computer() {
                 <Fade><span/></Fade>
                 <Fade bottom>
                     <SContent>
-                    <SText>El Semillero de Video Juegos </SText>
-                        <SImage4 src='images/compe.jpeg'/>
+                    <SText>En nuestro semillero de videojuegos, cultivamos un ambiente de creatividad y colaboración, donde se promueve la exploración y la experimentación en la creación de videojuegos. Nos enfocamos en desarrollar experiencias únicas y desafiantes que trasciendan los límites de lo convencional y que inspiren a nuestros integrantes a alcanzar su máximo potencial en el mundo de los videojuegos.</SText>
+                        <SImage4 src='images/videj.jpeg'/>
                     </SContent>
                 </Fade>       
             </Semillero>
+            <Span/>
         </Section2>
         <Section2>
             <Join>
@@ -193,13 +194,13 @@ const Section = styled.div`
     justify-content: center;
     height: 100vh;
     span {
-    margin: 1em;
-    height: 4px;
-    width: 80%;
-    background: black;
-    margin-bottom: 4px;
-    border-radius: 5px;
-  }
+        margin: 1em;
+        height: 4px;
+        width: 80%;
+        background: black;
+        margin-bottom: 4px;
+        border-radius: 5px;
+    }
 `
 const Section1 = styled.div`
     display: flex;
@@ -290,6 +291,15 @@ const Section2 = styled.div`
     margin-top: 3em;
     justify-content: center;
     align-content: center;
+
+`
+const Span = styled.span`
+    margin: 1em;
+    height: 4px;
+    width: 80%;
+    background: black;
+    margin-bottom: 4px;
+    border-radius: 5px;
 `
 const Part =  styled.div`
     display: flex;
@@ -457,7 +467,7 @@ const Join  = styled.div`
     margin-top: 2em;
     margin-bottom: 5em;
     display: flex;
-    gap: 8em;
+    gap: 6em;
     @media (max-width: 740px) {
         flex-direction: column;
   

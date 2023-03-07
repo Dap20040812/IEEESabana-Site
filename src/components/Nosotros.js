@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+
 function Nosotros() {
   return (
     <Container>
@@ -49,9 +50,13 @@ function Nosotros() {
         </Persona>
         <Persona>
           <Foto>
-            <img src='images/foto.png'/>
+            <img src='images/presia.jpeg'/>
           </Foto>
-          <Cargo>Presidenta AESS</Cargo>
+          <Cargo>
+            <>Presidenta AESS</>
+            <span/>
+            <Name>Laura Mayorga</Name>
+          </Cargo>
         </Persona>
         <Persona>
           <Foto>
@@ -77,15 +82,23 @@ function Nosotros() {
         </Persona>
         <Persona>
           <Foto>
-            <img src='images/foto.png'/>
+            <img src='images/comu.jpeg'/>
           </Foto>
-          <Cargo>Community Manager</Cargo>
+          <Cargo>
+            <>Community Manager</>
+            <span/>
+            <Name>Vanessa Gonzáles</Name>
+          </Cargo>
         </Persona>
         <Persona>
           <Foto>
-            <img src='images/foto.png'/>
+            <img src='images/logi.jpeg'/>
           </Foto>
-          <Cargo>Líder de Logística</Cargo>
+          <Cargo>
+            <>Líder de Logística</>
+            <span/>
+            <Name>Claudia Paez</Name>
+          </Cargo>
         </Persona>
         <Persona>
           <Foto>
