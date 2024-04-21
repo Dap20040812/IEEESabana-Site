@@ -1,18 +1,53 @@
 import React, { useState, useEffect} from 'react'
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
+import { auth} from "../firebase"
 import { useNavigate } from 'react-router-dom'
+import { selecUserName,
+  selecUserPhoto,
+  selecUserUid,
+  setUserLogin,
+  setSignOut, 
+  selecUserEmail} from '../features/user/UserSlice'
+import {useDispatch, useSelector} from "react-redux"
 
 function Header() {
 
     const [isOpen, setIsOpen] = useState(false)
     const history = useNavigate()
+    const dispatch = useDispatch()
 
 
     const main= () => {
       history('/')
     }
 
+    useEffect(() => {
+      auth.onAuthStateChanged(async (user) =>{
+          if(user){
+              dispatch(setUserLogin({
+                  name: user.displayName,
+                  email: user.email,
+                  uid: user.uid,
+                  photo: user.photoURL
+                  
+              }))
+              history.push("/admin")
+          }else{
+            history("/")  
+          }
+      })
+    },[])     
+    
+    const userEmail = useSelector(selecUserEmail);
+
+    const signOut = () => {
+      auth.signOut()
+      .then(()=> {
+          dispatch(setSignOut());
+          history.push("/intro")
+      })
+  }
   return (
     
     <Nav>
@@ -28,6 +63,14 @@ function Header() {
             <MenuLink to={`/`}> <span>Inicio</span> </MenuLink>
             <MenuLink to={`/nosotros`}> <span>Nosotros</span> </MenuLink>
             <MenuLink to={`/capitulos`}> <span>Capítulos</span> </MenuLink>
+            <MenuLink to={`/event`}> <span>Eventos</span> </MenuLink>
+            {!userEmail ? (
+              <MenuLink to={`/login`}> <span>Login</span> </MenuLink>
+            ):
+            <>
+              <MenuLink to={`/admin`}> <span>Admin</span> </MenuLink>
+              <MenuLink><span onClick={signOut}>Sign Out</span></MenuLink>
+            </>}
         </NavMenu>
     </Nav>
   )
@@ -71,10 +114,10 @@ const NavMenu = styled.div`
     justify-content: space-between;
     align-items: center;
     position: relative;
-    @media (max-width: 800px) {
+    @media (max-width: 1410px) {
         overflow: hidden;
         flex-direction: column;
-        max-height: ${({ isOpen }) => (isOpen ? "300px" : "0")};
+        max-height: ${({ isOpen }) => (isOpen ? "400px" : "0")};
         transition: max-height 0.3s ease-in;
         width: 100%;
     }
@@ -91,7 +134,7 @@ const Hamburger = styled.div`
     margin-bottom: 4px;
     border-radius: 5px;
   }
-  @media (max-width: 800px) {
+  @media (max-width: 1410px) {
     display: flex;
   }
 `

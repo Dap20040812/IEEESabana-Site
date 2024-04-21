@@ -86,8 +86,6 @@ const Caps = styled.div`
     @media (max-width: 1300px) {
         grid-template-columns: repeat(2,1fr);  
         margin-top: 4em;  
-
-  
     }
     @media (max-width: 740px) {
         grid-template-columns: repeat(1,1fr);

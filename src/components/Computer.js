@@ -54,7 +54,7 @@ function Computer() {
                     <Fade bottom>
                         <Card>
                             <BorderTop/>
-                            <Fotoc><img src='images/presic.jpeg'/></Fotoc>
+                            <Fotoc><img src='images/presic.jpg'/></Fotoc>
                             <span>Juan Diego García</span>
                             <Job>Presidente</Job>
                         </Card>
@@ -62,7 +62,7 @@ function Computer() {
                     <Fade bottom>
                         <Card>
                             <BorderTop/>
-                            <Fotoc><img src='images/vicec.jpg'/></Fotoc>
+                            <Fotoc><img src='images/vicec2.jpg'/></Fotoc>
                             <span>Diego Prado</span>
                             <Job>Vicepresidente</Job>
                         </Card>
@@ -72,7 +72,7 @@ function Computer() {
                     <Fade bottom>
                         <Card>
                             <BorderTop/>
-                            <Fotoc><img src='images/mia.jpg'/></Fotoc>
+                            <Fotoc><img src='images/mia2.jpg'/></Fotoc>
                             <span>María Lucia Lacouture</span>
                             <Job>Manager of Internal Analytics</Job>
                         </Card>
@@ -88,7 +88,7 @@ function Computer() {
                     <Fade bottom>
                         <Card>
                             <BorderTop/>
-                            <Fotoc><img src='images/cms.jpeg'/></Fotoc>
+                            <Fotoc><img src='images/cms.jpg'/></Fotoc>
                             <span>Juliana Giraldo</span>
                             <Job>Community Manager</Job>
                         </Card>
@@ -310,7 +310,6 @@ const Part =  styled.div`
         flex-direction: column;
     }
 `
-
 const Part1 = styled.div`
     font-size: 2em;
     align-items: center;
@@ -341,7 +340,6 @@ const SubTittle = styled.div`
         font-size: 2em;
     }
 `
-
 const Personas = styled.div`
   display: flex;
   flex-direction: row;
@@ -435,7 +433,6 @@ const SContent = styled.div`
         gap: 4em;
     }
 `
-
 const SImage1 = styled.img`
     width: 35%;
     border-radius: 2em;

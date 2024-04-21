@@ -83,6 +83,14 @@ code {
   }
 }
 
-.card:hover {
-  transform: scale(1.04) rotate(-1deg);
+@keyframes pulse {
+  from {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
