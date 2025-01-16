@@ -1,4 +1,5 @@
-import { ArrowLeftOutlined, ArrowRightOutlined } from '@material-ui/icons'
+import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 import React, {useState} from 'react'
 import styled from 'styled-components'
 import {sliderItems} from '../data'
@@ -19,7 +20,7 @@ function Slider() {
   return (
     <Container>
         <Arrow direction='left' onClick={() => handleClick("left")}>
-            <ArrowLeftOutlined />
+            <FaArrowLeft/>
         </Arrow>
         <Wrap slideIndex={slideIndex} >
             {sliderItems.map(item => (
@@ -36,7 +37,7 @@ function Slider() {
             ))}
         </Wrap>
         <Arrow direction='right' onClick={() => handleClick("right")}>
-            <ArrowRightOutlined />
+            <FaArrowRight/>
         </Arrow>
     </Container>
   )

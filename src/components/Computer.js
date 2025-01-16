@@ -1,15 +1,34 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Fade, Zoom} from 'react-reveal'
-import { CodeBlock, 	a11yLight								 as theme} from "react-code-blocks";
+import { Fade, Zoom} from "react-awesome-reveal";
+import { CodeBlock, a11yLight as theme} from "react-code-blocks";
 import { useLocation } from 'react-router-dom';
+import { getChapterPresident, getChapterVicePresident, getChapterVoluntaries } from '../querys/GetVoluntarios';
 
 
 function Computer() {
     const { pathname } = useLocation();
+    const [presidente, setPresidente] = useState("")
+    const [vicepresidente, setVicepresidente] = useState("")
+    const [voluntaries, setVoluntaries] = useState([])
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        const getPresidente = async () => {
+            const response = await getChapterPresident("Computer Society")
+            setPresidente(response[0])
+        }
+        const getVicepresidente = async () => {
+            const response = await getChapterVicePresident("Computer Society")
+            setVicepresidente(response[0])
+        }
+        const getVoluntaries = async () => {
+            const response = await getChapterVoluntaries("Computer Society")
+            setVoluntaries(response)
+        }
+        getPresidente()
+        getVicepresidente()
+        getVoluntaries()
     }, [pathname]);
 
   const Life = ()=>{
@@ -51,64 +70,38 @@ function Computer() {
         <Section2>
             <SubTittle><Fade bottom>{"Public ArrayList<Personas> getComputerTeam()"}</Fade></SubTittle>
                 <Personas>
+                    {presidente &&
                     <Fade bottom>
                         <Card>
                             <BorderTop/>
-                            <Fotoc><img src='images/presic.jpg'/></Fotoc>
-                            <span>Juan Diego García</span>
-                            <Job>Presidente</Job>
+                            <Fotoc><img src={presidente.Foto}/></Fotoc>
+                            <span>{presidente.Nombre}</span>
+                            <Job>{presidente.Cargo}</Job>
                         </Card>
                     </Fade>
+                    }
+                    {vicepresidente &&
                     <Fade bottom>
                         <Card>
                             <BorderTop/>
-                            <Fotoc><img src='images/vicec2.jpg'/></Fotoc>
-                            <span>Diego Prado</span>
-                            <Job>Vicepresidente</Job>
+                            <Fotoc><img src={vicepresidente.Foto}/></Fotoc>
+                            <span>{vicepresidente.Nombre}</span>
+                            <Job>{vicepresidente.Cargo}</Job>
                         </Card>
                     </Fade>
+                    }
                 </Personas>
                 <Personas>
-                    <Fade bottom>
-                        <Card>
-                            <BorderTop/>
-                            <Fotoc><img src='images/mia2.jpg'/></Fotoc>
-                            <span>María Lucia Lacouture</span>
-                            <Job>Manager of Internal Analytics</Job>
-                        </Card>
-                    </Fade>
-                    <Fade bottom>
-                        <Card>
-                            <BorderTop/>
-                            <Fotoc><img src='images/logc.jpeg'/></Fotoc>
-                            <span>Camila Colmenares</span>
-                            <Job>Líder de Logística</Job>
-                        </Card>
-                    </Fade>
-                    <Fade bottom>
-                        <Card>
-                            <BorderTop/>
-                            <Fotoc><img src='images/cms.jpg'/></Fotoc>
-                            <span>Juliana Giraldo</span>
-                            <Job>Community Manager</Job>
-                        </Card>
-                    </Fade>
-                    <Fade bottom>
-                        <Card>
-                            <BorderTop/>
-                            <Fotoc><img src='images/modcs.jpeg'/></Fotoc>
-                            <span>Lukas Nieto</span>
-                            <Job>Moderador de Comunicaciones</Job>
-                        </Card>
-                    </Fade>
-                    <Fade bottom>
-                        <Card>
-                            <BorderTop/>
-                            <Fotoc><img src='images/dani.jpg'/></Fotoc>
-                            <span>Daniel Saavedra</span>
-                            <Job>Profesor Asesor</Job>
-                        </Card>
-                    </Fade>
+                    {voluntaries.map((voluntary) => (
+                        <Fade bottom>
+                            <Card>
+                                <BorderTop/>
+                                <Fotoc><img src={voluntary.Foto}/></Fotoc>
+                                <span>{voluntary.Nombre}</span>
+                                <Job>{voluntary.Cargo}</Job>
+                            </Card>
+                        </Fade>
+                    ))}
                 </Personas>
         </Section2>
         <Section2>

@@ -1,66 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import db from '../firebase';
-import { getAllEvents } from '../querys/events';
 
-function AddEvent() {
-
-  const [events, setEvents] = useState([])
-
-  useEffect(() => {
-    const GetEvents = async () => {
-      const data = await getAllEvents();
-      const formattedData = data.map(event => {
-        const timestamp = event.Fecha;
-        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-        return {
-          ...event,
-          formattedDate: date.toLocaleDateString(),
-          formattedTime: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-      });
-      setEvents(formattedData);
-    };
-    GetEvents();
-  }, []);
-
+function ContentManager() {
   return (
     <Container>
-        <Title>Gestión de Eventos</Title>
-        <TopButtonContainer>
-            <AddEventButton> + Agregar Evento</AddEventButton>
-        </TopButtonContainer>
-        <Content>
-          <Events>
-          {events && events.map((event) => (
-                <Event key={event.id}>
-                    <EventInfo>
-                      <EventLabel>Nombre:</EventLabel>
-                      <div>{event.Nombre}</div>
-                      <EventLabel>Fecha:</EventLabel>
-                      <div>{event.formattedDate} {event.formattedTime}</div>
-                      <EventLabel>Lugar:</EventLabel>
-                      <div>{event.Lugar}</div>
-                      <EventLabel>Descripción:</EventLabel>
-                      <div>{event.Desc}</div>
-                    </EventInfo>
-                    <EventButtonsContainer>
-                      <EventFormsButton>Editar</EventFormsButton>
-                      <EventFormsButton>Eliminar</EventFormsButton>
-                    </EventButtonsContainer>
-                </Event>
-            ))}
-          </Events>
-        </Content>
+        <Title>
+            Gestión de Contenido
+        </Title>
+        <ButtonTopContainer>
+            <AddButton></AddButton>
+        </ButtonTopContainer>
     </Container>
   )
-} 
+}
 
-export default AddEvent
+export default ContentManager
 
 
 const Container = styled.div`
-    display: flex; 
+    display: flex;
     min-height: 65vh;
     height: max-content;
     width: 100%;
@@ -80,82 +38,29 @@ const Title = styled.div`
   }
 `
 
-const TopButtonContainer = styled.div`
+const ButtonTopContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    width: 90%;
-`
-
-const Events = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 2em;
-    margin-top: 2em;
-    flex-wrap: wrap;
-`
-
-const Event = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    border: 2px solid black;
-    border-radius: 1em;
-`
-const EventLabel = styled.div`
-    font-weight: bold;
-    margin-top: 0.5em;
-`
-const EventInfo = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    margin: 0.5em;
-`
-const EventButtonsContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1em;
     width: 100%;
-    padding: 1em;
-    
 `
 
-const EventFormsButton = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: black;
-    color: white;
-    border-radius: 1em;
-    width: 6em;
-    height: 3em;
-    cursor: pointer;
-
-    &:hover{
-      transform: scale(1.1);
-    }
-`
 const AddEventButton = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 1em;
+    margin: 1em;
+    width: 8em;
+    height: 2em;
+    font-size: 1.5em;
     font-weight: bold;
-    width: 9em;
-    height: 3em;
-    padding: 0.3em;
-    background: black;
-    color: white;
+    border: none;
+    border-radius: 1em;
+    background-color: #FDC649;
     cursor: pointer;
     &:hover{
-      transform: scale(1.1);
+        transform: scale(1.1);
+        background-color: #43FF7C;
     }
 `
 

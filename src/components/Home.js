@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Fade, Zoom} from 'react-reveal'
+import { Fade, Zoom} from "react-awesome-reveal";
 function Home() {
   return (
     <Container>
@@ -123,6 +123,6 @@ const Todos = styled.img`
   border: 2px solid black;
   margin-top: 3em;
   margin-bottom: 3em;
-  width: 95%;
+  width: 80%;
 `
 

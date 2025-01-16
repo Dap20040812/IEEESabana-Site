@@ -7,8 +7,8 @@ async function updateVoluntaryCharge(voluntary,charge){
 
     if(voluntary.Capitulo === "Mesa Directiva"){
 
-        addObjectToCargosF(voluntary.Capitulo,voluntary.CargoMD)
-        deleteObjectToCargosO(voluntary.Capitulo,voluntary.CargoMD)
+        await addObjectToCargosF(voluntary.Capitulo,voluntary.CargoMD)
+        await deleteObjectToCargosO(voluntary.Capitulo,voluntary.CargoMD)
         await db.collection("Voluntarios").doc(voluntary.id).update({
             CargoMD: charge
         })
@@ -16,8 +16,8 @@ async function updateVoluntaryCharge(voluntary,charge){
     }
     else{
 
-        addObjectToCargosF(voluntary.Capitulo,voluntary.Cargo)
-        deleteObjectToCargosO(voluntary.Capitulo,voluntary.Cargo)
+        await addObjectToCargosF(voluntary.Capitulo,voluntary.Cargo)
+        await deleteObjectToCargosO(voluntary.Capitulo,voluntary.Cargo)
         await db.collection("Voluntarios").doc(voluntary.id).update({
             Cargo: charge
         })
@@ -30,6 +30,44 @@ async function updateVoluntaryCharge(voluntary,charge){
 
     
 }
+
+export async function setPresidente(chapter,charge, uid){
+
+
+    if(chapter === "Mesa Directiva"){
+
+        await db.collection("Voluntarios").doc(uid).update({
+            CargoMD: charge,
+            Capitulo: chapter
+        })
+        
+    }
+    else{
+        await db.collection("Voluntarios").doc(uid).update({
+            Cargo: charge,
+            Capitulo: chapter
+        })
+
+    }
+    
+}
+
+export async function changePresidente(chapter,charge,uid, newUid){
+
+    console.log(chapter,charge,uid,newUid)
+    
+    await db.collection("Voluntarios").doc(newUid).update({
+        Cargo: charge,
+        Capitulo: chapter
+    })
+
+    await db.collection("Voluntarios").doc(uid).update({
+        Cargo: "",
+        Capitulo: ""
+    })
+
+}
+
 
 async function deleteVoluntaryOfChapter(voluntary){
 
@@ -59,8 +97,9 @@ async function deleteVoluntaryOfChapter(voluntary){
 }
 
 async function addExistVoluntaryToChapter(voluntary,charge,capitulo){
+    console.log(voluntary,charge,capitulo)
 
-    await db.collection("Voluntarios").doc(voluntary.id).update({
+    await db.collection("Voluntarios").doc(voluntary.UserID).update({
         Cargo: charge,
         Capitulo: capitulo
     })
@@ -71,6 +110,13 @@ async function addExistVoluntaryToChapter(voluntary,charge,capitulo){
 
 
 }
+
+export async function updateVoluntaryFoto(voluntary,foto){
+    await db.collection("Voluntarios").doc(voluntary.UserID).update({
+        Foto: foto
+    })
+}
+
 
 export default updateVoluntaryCharge
 export {deleteVoluntaryOfChapter,addExistVoluntaryToChapter}

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { Fade, Zoom} from 'react-reveal'
+import { Fade, Zoom} from "react-awesome-reveal";
 import { useLocation } from 'react-router-dom';
 
 function Aess() {

@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import styled from "styled-components";
 import { btnReset, v } from "../styles/variables";
-import { Link } from "react-router-dom";
-import {selecUserUid, selecUserPhoto, selecUserName} from "../features/user/UserSlice"
-import {useSelector} from "react-redux"
+import { Link, useNavigate } from "react-router-dom";
+import {selecUserUid, selecUserPhoto, selecUserName, setSignOut} from "../features/user/UserSlice"
+import {useDispatch, useSelector} from "react-redux"
 import {
   AiOutlineApartment,
   AiOutlineHome,
@@ -11,12 +11,17 @@ import {
   AiOutlineSearch,
   AiOutlineSetting,
 } from "react-icons/ai";
+import { GrSchedules } from "react-icons/gr";
 import { MdLogout, MdOutlineAnalytics } from "react-icons/md";
 import { BsPeople } from "react-icons/bs";
 import User from './User';
 import AddEvent from './AddEvent';
 import CapituloConf from './CapituloConf';
-import db from '../firebase';
+import db, { auth } from '../firebase';
+import ContentManager from './ContentManager';
+import RamaConf from './RamaConf';
+
+
 
 function AdminHome() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,6 +29,17 @@ function AdminHome() {
   const [voluntary, setVoluntary] = useState()
   const id = useSelector(selecUserUid)
   const [capitulo, setCapitulo] = useState()
+  const history = useNavigate()
+  const dispatch = useDispatch()
+  
+  const signOut = () => {
+
+    auth.signOut()
+    .then(()=> {
+        dispatch(setSignOut());
+        history.push("/intro")
+    })
+}
 
   useEffect(() => {
 
@@ -46,10 +62,12 @@ function AdminHome() {
                 });
         })
     }
+
     GetUser()
-    console.log("este es el capitulo ",capitulo)
+
 
   },[]) 
+
   const nextPage = (number) => {
     setPage(number)
     console.log(number)
@@ -83,14 +101,12 @@ function AdminHome() {
                 </SLinkContainer>
             ))}
             <SDivider />
-            {secondaryLinksArray.map(({ icon, label }) => (
-                <SLinkContainer key={label}>
-                    <SLink to="/" style={!sidebarOpen ? { width: `fit-content` } : {}}>
-                        <SLinkIcon>{icon}</SLinkIcon>
-                        {sidebarOpen && <SLinkLabel>{label}</SLinkLabel>}
+             <SLinkContainer key={"Salir"} onClick={signOut}>
+                    <SLink  style={!sidebarOpen ? { width: `fit-content` } : {}}>
+                        <SLinkIcon><MdLogout/></SLinkIcon>
+                        {sidebarOpen && <SLinkLabel>"Salir"</SLinkLabel>}
                     </SLink>
                 </SLinkContainer>
-            ))}
             <SDivider />
         </SSidebar>
         {page === 1 ? (
@@ -100,9 +116,16 @@ function AdminHome() {
         ):<>
         {page === 2 ? (
           <>
-            <CapituloConf voluntary={voluntary} capitulo={capitulo}/>
+            <RamaConf/>
           </>
-        ) :<>{page === 2 }</>}
+        ) :<>{page === 3 ? (
+            <>
+                <AddEvent/>
+            </>
+        ):<>
+            <ContentManager/>
+        </>}
+        </>}
         </>}
         
     </Container>
@@ -273,20 +296,20 @@ const linksArray = [
   },
   {
       label: "Statistics",
-      icon: <MdOutlineAnalytics />,
+      icon: <BsPeople />,
       to: 2,
       notification: 3,
   },
   {
       label: "Customers",
-      icon: <BsPeople />,
-      to: "/customers",
+      icon: <GrSchedules/>,
+      to: 3,
       notification: 0,
   },
   {
       label: "Diagrams",
       icon: <AiOutlineApartment />,
-      to: "/diagrams",
+      to: 4,
       notification: 1,
   },
 ];
@@ -295,9 +318,5 @@ const secondaryLinksArray = [
   {
       label: "Settings",
       icon: <AiOutlineSetting />,
-  },
-  {
-      label: "Logout",
-      icon: <MdLogout />,
-  },
+  }
 ];

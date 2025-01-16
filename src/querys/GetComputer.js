@@ -159,11 +159,12 @@ async function deleteObjectToCargosF(capitulo, cargoObject) {
       console.log('Document does not exist');
       return;
     }
-
+    console.log("Cargo to remove",cargoObject)
     const capituloDoc = capitulosSnapshot.docs[0];
     const currentCargosF = capituloDoc.data().CargosF || [];
     const newCargosF = currentCargosF.filter((cargo) => cargo !== cargoObject);
 
+    console.log("New catgos",newCargosF);
     await capituloDoc.ref.update({
       CargosF: newCargosF
     });

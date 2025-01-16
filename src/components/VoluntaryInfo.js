@@ -1,78 +1,56 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
+import { Spinner } from 'reactstrap'
 import styled from 'styled-components'
-import {selecUserUid, selecUserPhoto, selecUserName} from "../features/user/UserSlice"
-import {useSelector} from "react-redux"
-import {Spinner} from "reactstrap"
-import db, {auth} from "../firebase"
-import {storage} from '../firebase'
-import {setUserLogin} from "../features/user/UserSlice"
-import { useDispatch } from "react-redux"
-import { IoMdCreate } from "react-icons/io";
-import queryVoluntario from '../querys/GetVoluntarios'
+import { updateVoluntaryFoto } from '../querys/editVoluntary';
+import { use } from 'react';
+import { storage } from '../firebase';
+import { queryVoluntario } from '../querys/GetVoluntarios';
+function VoluntaryInfo(props) {
 
-function User() {
-  const photo = useSelector(selecUserPhoto);
-  const name = useSelector(selecUserName)
-  const id = useSelector(selecUserUid)
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch()
-  const [edit, setEdit] = useState(false);
-  const [voluntary, setVoluntary] = useState()
-  useEffect(() => {
-     db.collection("Voluntarios")
-     .where('UserID', '==', id)
-     .get()
-     .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            setVoluntary(doc.data())
-          console.log('Document data:', doc.data());
-       });
-     })
-  },[]) 
+    const [voluntary, setVoluntary] = useState();
+    const [loading, setLoading] = useState(false);
 
-  const archivoMandler = async (e)=>{
-    setLoading(true)
-    const archivo = e.target.files[0];
-    const storageRef = storage.ref();
-    const archivoPath = storageRef.child(archivo.name);
-    await archivoPath.put(archivo);
-    console.log(archivo.name);
-    const url =  await archivoPath.getDownloadURL();
-    auth.currentUser.updateProfile({
-        photoURL: url
-    }).then(function(){
+    useEffect(() => {
+      const getVoluntary = async () => {
+          const response = await queryVoluntario(props.voluntary.UserID)
+          console.log(response[0])
+          setVoluntary(response[0])
+      }
+      getVoluntary();
+    }, [loading])
+
+    const archivoMandler = async (e) => {
+      setLoading(true);
+      const archivo = e.target.files[0];
+      const storageRef = storage.ref();
+      const archivoPath = storageRef.child(archivo.name);
+    
+      try {
+        await archivoPath.put(archivo);
+        const url = await archivoPath.getDownloadURL();
+        await updateVoluntaryFoto(voluntary, url);
+      } catch (error) {
+        console.error("Error al subir el archivo:", error);
+      } finally {
         setLoading(false);
-        dispatch(setUserLogin({
-            name: auth.currentUser.displayName,
-            email: auth.currentUser.email,
-            uid: auth.currentUser.uid,
-            photo: auth.currentUser.photoURL
-            
-        }))
-    },function(error) {
-        window.alert("No se pudo cargar la imagen.")
-     });
-  }
-    const editBox = () =>{
-      setEdit(true)
-    }
+      }
+    };
+
   return (
     <Container>
       {voluntary && (
         <>
-      <EditBox show={edit}>
-        <h1>hola</h1>
-      </EditBox>
       <Title>Información de Usuario</Title>
       <Content>
         <Foto>
           <ImageTitle>
-            <label for="file-input">
+              <label for="file-input">
               <img className='img1' src={voluntary.Foto}/>
               <img className='img2' src='images/ci.jpg'/>
             </label>
             <input id="file-input" type="File" accept="image/png, image/jpeg, image/jpg"  onChange={archivoMandler}/>
                       {loading ? <Spinner/> : ""}
+
           </ImageTitle>
           <Name>
             <h2>{voluntary.Nombre}</h2>
@@ -101,7 +79,8 @@ function User() {
   )
 }
 
-export default User
+export default VoluntaryInfo
+
 
 const Container = styled.div`
     display: flex;
@@ -117,7 +96,7 @@ const Container = styled.div`
 const Title = styled.div`
   font-weight: bold;
   font-size: 3em;
-  margin: 1em;
+  margin-bottom: 1em;
 
   @media (max-width: 740px) {
     font-size: 2em;
@@ -262,7 +241,7 @@ const Camp = styled.div`
   display: flex;
   flex-direction: row;
   align-items: start;
-  font-size: 1.5em;
+  font-size: 1.2em;
   gap: 1em;
   @media (max-width: 800px) {
     flex-direction: column;
@@ -281,6 +260,4 @@ const CampText = styled.div`
   text-align: start;
   gap: 1em;
 `
-
-
 

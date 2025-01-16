@@ -6,13 +6,16 @@ import {useSelector} from "react-redux"
 import getPresidente, { addObjectToCargosF, getCOmputerVoluntaries, deleteObjectToCargosF, getExistingVoluntaries} from '../querys/GetComputer'
 import {AiOutlineSetting, AiOutlineUserAdd, AiOutlineArrowLeft,AiOutlineClose} from "react-icons/ai";
 import { IoMdCreate } from "react-icons/io";
-import { StyleRounded } from '@material-ui/icons'
 import {storage} from '../firebase'
 import {Spinner} from "reactstrap"
 import createVoluntary from '../querys/createVoluntary'
 import { BsBox } from 'react-icons/bs'
 import { getValue } from '@testing-library/user-event/dist/utils'
-import updateVoluntaryCharge, { addExistVoluntaryToChapter, deleteVoluntaryOfChapter } from '../querys/editVoluntary'
+import updateVoluntaryCharge, { addExistVoluntaryToChapter, changePresidente, deleteVoluntaryOfChapter } from '../querys/editVoluntary'
+import { Modal } from 'react-bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { editChapterInfo } from '../querys/chapters'
+
 
 
 function CapituloConf(props) {
@@ -45,15 +48,23 @@ function CapituloConf(props) {
   const [editBox, setEditBox] = useState(false)
   const [newV, setNewV] = useState(true)
   const [exist, setExist] = useState(false)
-  const [extisVoluntaries, setExistVoluntaries] = useState(false)
+  const [extisVoluntaries, setExistVoluntaries] = useState([])
   const [addExistVoluntary, setAddExistVoluntary] = useState(false)
+  const [editChapter, setEditChapter] = useState(false)
+  const [changePresident, setChangePresident] = useState(false)
+  const [formData, setFormData] = useState({
+    nombreCapitulo: "",
+    logo: null,
+    color: "#000000",
+  });
+  const [selectedNewPresident, setSelectedNewPresident] = useState(null);
 
   useEffect(() => {
 
     const GetPresi = async() =>{
         db.collection("Voluntarios")
         .where('Cargo', '==', "Presidente")
-        .where('Capitulo', '==', "Computer Society")
+        .where('Capitulo', '==', props.capitulo.Nombre)
         .get()
         .then((querySnapshot) => {
              querySnapshot.forEach((doc) => {
@@ -91,14 +102,14 @@ function CapituloConf(props) {
                     });
                 })    
     }
-
+    console.log(props.capitulo)
     setNumVoluntaries(props.capitulo.Voluntarios.length);
     GetCapitulo()  
     GetPresi()
     GetVolunatries()
     setEditBox(false)
 
-  },[]) 
+  },[deleteCargos, vcreated, editVoluntary, addCargo, addExistVoluntary, editChapter, changePresident]) 
 
 
 
@@ -120,7 +131,8 @@ const handleEdit = async(e) => {
 const handleAddExistVoluntary = async(e) => {
   e.preventDefault();
   await addExistVoluntaryToChapter(voluntaryToEdit, selectCargo, capitulo.Nombre)
-
+  setAddExistVoluntary(false)
+  setAdd(false)
 }
 const usernameEntered = (e) => {
     setUsername(e.target.value);
@@ -140,17 +152,14 @@ const telEntered = (e) => {
 } 
 const AddCargo = async(e) =>{
   e.preventDefault();
-  addObjectToCargosF(capitulo.Nombre, cargo)
-  console.log("v")
+  await addObjectToCargosF(capitulo.Nombre, cargo)
   setCargo("") 
   setAddCargo(false)
             
 }
-const deleteCargo = () => {
-  const newChapter = capitulo.CargosF.filter(cargo => cargo !== dCargo);
-  deleteObjectToCargosF(capitulo.Nombre, newChapter)
+const deleteCargo = async() => {
+  await deleteObjectToCargosF(capitulo.Nombre, dCargo)
   setDeleteCargos(false)
-  console.log(newChapter,id)
 }
 const setCargosToDelete = (cargos) => {
   setDeleteCargos(true)
@@ -168,6 +177,7 @@ const archivoMandler = async (e)=>{
   setLoading(false)
 }
 const configVoluntary = (voluntary) => {
+  console.log("dd",voluntary)
   setVoluntaryToEdit(voluntary)
   setEditVoluntary(true)
 }
@@ -204,6 +214,44 @@ const changeOption2 = () => {
   setExist(true)
   setNewV(false)
 }
+
+      const handleChange = (e) => {
+        const { name, value, files } = e.target;
+        setFormData({
+          ...formData,
+          [name]: files ? files[0] : value,
+        });
+      };
+    
+      const handleEditChapter = async(e) => {
+        e.preventDefault();
+        await editChapterInfo(formData);
+        setEditChapter(false);
+      };
+
+      const archivoMandlerChapter = async (e) => {
+        setLoading(true);
+        const archivo = e.target.files[0];
+        const storageRef = storage.ref();
+        const archivoPath = storageRef.child(archivo.name);
+      
+        try {
+          await archivoPath.put(archivo);
+          const url = await archivoPath.getDownloadURL();
+          console.log("URL del logo:", url);
+      
+          // Actualizamos el estado de formData con la URL del logo
+          setFormData((prevData) => ({
+            ...prevData,
+            logo: url,
+          }));
+        } catch (error) {
+          console.error("Error al subir el archivo:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
 useEffect(() => {
   const GetVolunatries = async () => {
     const voluntariesArray = []; 
@@ -251,7 +299,24 @@ useEffect(() => {
   console.log(getExistingVoluntaries())
 
  GetVoluntary()
-},[exist])
+},[exist, changePresident])
+
+const setChapterToEdit = () => {
+  setFormData({
+    nombreCapitulo: capitulo.Nombre,
+    logo: capitulo.Logo,
+    color: capitulo.Color,
+    id: capitulo.Id,
+  });
+  setEditChapter(true);
+}
+
+const changePresidentInfo = async(e) => {
+  e.preventDefault();
+  console.log(selectedNewPresident)
+  await changePresidente(capitulo.Nombre, "Presidente", presidente.UserID, selectedNewPresident)
+  setChangePresident(false)
+}
 
     return (
     <Container>
@@ -266,6 +331,10 @@ useEffect(() => {
                     <NVoluntaries>Número de Voluntarios : {numVoluntaries}</NVoluntaries>
                     </Info>
                 )}
+                <EditButtonsContainer>
+                  <EditButton onClick={() => setChapterToEdit()}>Editar Capítulo</EditButton>
+                  <EditButton onClick={() => setChangePresident(true)}>Cambiar Presidente</EditButton>
+                </EditButtonsContainer>
                 <Part2>
                     <DeleteBox show={vcreated}>
                       <BoxTitle>Información</BoxTitle>
@@ -337,7 +406,7 @@ useEffect(() => {
                         <Sign id='Sign'>
                         <svg fill="#000000"  viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2,21h8a1,1,0,0,0,0-2H3.071A7.011,7.011,0,0,1,10,13a5.044,5.044,0,1,0-3.377-1.337A9.01,9.01,0,0,0,1,20,1,1,0,0,0,2,21ZM10,5A3,3,0,1,1,7,8,3,3,0,0,1,10,5ZM23,16a1,1,0,0,1-1,1H19v3a1,1,0,0,1-2,0V17H14a1,1,0,0,1,0-2h3V12a1,1,0,0,1,2,0v3h3A1,1,0,0,1,23,16Z"/></svg>               
                         </Sign>
-                        <Text id='Text'>Añadir</Text>
+                        <TextButton id='Text'>Añadir</TextButton>
                     </AddBtn>
 
                 </SubTittle>
@@ -385,6 +454,7 @@ useEffect(() => {
               <br/>
               <StyledLabel>Cargo:</StyledLabel>
               <StyledSelect id="mySelect" onChange={e => cargoEntered(e)} required>
+                <option value="">Seleccione un cargo</option>
                 {capitulo && (
                   capitulo.CargosF.map((cargo) => (
                     <option value={cargo}>{cargo}</option>
@@ -403,7 +473,9 @@ useEffect(() => {
             <Voluntaries>
                     {extisVoluntaries && extisVoluntaries.map((voluntary) => (
                     <Voluntary>
-                    <Img onClick={() => setAddExistVoluntary(true)}>
+                    <Img onClick={() => {setAddExistVoluntary(true)
+                      configVoluntary(voluntary)
+                    }}>
                       <img id="img1" src='images/add.svg'/>
                       <img id="img2" src={voluntary.Foto}/>
                     </Img>
@@ -421,11 +493,15 @@ useEffect(() => {
                 <BoxTitle>Cambiar Cargo</BoxTitle> 
                 <StyledForm onSubmit={handleAddExistVoluntary}>
                   <StyledLabel>Cargo:</StyledLabel>
-                  <StyledSelect id="mySelect" onChange={e => cargoEntered(e)} required>
+                  <StyledSelect id="mySelect" onChange={e => cargoEntered(e)}required defaultValue="">
+                  <option value="">Seleccione un cargo</option>
                     {capitulo && (
-                      capitulo.CargosF.map((cargo) => (
-                        <option value={cargo}>{cargo}</option>
-                      ))
+                      <>
+                      {capitulo.CargosF.map((cargo, index) => (
+                        <option key={index} value={cargo}>{cargo}</option>
+                      ))}
+                      </>
+
                     )}
                   </StyledSelect>
                   <StyledButton type="submit" disabled={!selectCargo}>Actualizar</StyledButton>
@@ -468,6 +544,7 @@ useEffect(() => {
                   <StyledForm onSubmit={handleEdit}>
                     <StyledLabel>Cargo:</StyledLabel>
                     <StyledSelect id="mySelect" onChange={e => cargoEntered(e)} required>
+                    <option value="">Seleccione un cargo</option>
                       {capitulo && (
                         capitulo.CargosF.map((cargo) => (
                           <option value={cargo}>{cargo}</option>
@@ -489,6 +566,7 @@ useEffect(() => {
               }
               
             </EditBox>
+            
           </Content>
           </>
           )}
@@ -497,6 +575,73 @@ useEffect(() => {
         }
         </>
         }
+        <Modal show={editChapter} onHide={() => setEditChapter(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Editar Capítulo</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1em'}}>
+            <Form onSubmit={handleEditChapter}>
+              <Label htmlFor="nombreCapitulo">Nombre del Capítulo</Label>
+              <Input
+                type="text"
+                id="nombreCapitulo"
+                name="nombreCapitulo"
+                placeholder="Ingrese el nombre del capítulo"
+                value={formData.nombreCapitulo}
+                onChange={handleChange}
+                required
+              />
+
+              <Label htmlFor="logo">Logo</Label>
+              <Input
+                type="file"
+                id="logo"
+                name="logo"
+                accept="image/*"
+                onChange={archivoMandlerChapter}
+              />
+              {loading ? <>Subiendo...</> : ""}
+
+              <Label htmlFor="color">Color</Label>
+              <Input
+                type="color"
+                id="color"
+                name="color"
+                value={formData.color}
+                onChange={handleChange}
+                required
+              />
+              <Button type="submit">Enviar</Button>
+            </Form>
+            </div>
+          </Modal.Body>
+        </Modal>
+        <Modal show={changePresident} onHide={() => setChangePresident(false)} centered>
+        <Modal.Header closeButton>
+            <Modal.Title>Cambiar Presidente</Modal.Title>
+          </Modal.Header>         
+           <Modal.Body>
+            <Form onSubmit={changePresidentInfo}>
+              <Label htmlFor="presidente">Presidente</Label>
+              <Select
+                id="presidente"
+                name="presidente"
+                value={formData.presidente}
+                onChange={(e) => setSelectedNewPresident(e.target.value)}
+                required
+              >
+                  <option value="">Seleccione un presidente</option>
+                {extisVoluntaries.map((voluntary) => (
+                  <option key={voluntary.UserID} value={voluntary.UserID}>
+                    {voluntary.Nombre}
+                  </option>
+                ))}
+              </Select>
+              <Button type="submit">Cambiar</Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
     </Container>
   )
 } 
@@ -517,7 +662,7 @@ const Container = styled.div`
 const Title = styled.div`
   font-weight: bold;
   font-size: 3em;
-  margin: 1em;
+  margin-bottom: 1em;
 
   @media (max-width: 740px) {
     font-size: 2em;
@@ -759,13 +904,13 @@ const Sign = styled.div`
         }
     }
 `
-const Text = styled.div`
+const TextButton = styled.div`
   position: absolute;
   right: 0%;
   width: 0%;
   opacity: 0;
   color: white;
-  font-size: 1.2em;
+  font-size: 0.4em;
   font-weight: 600;
   transition-duration: .3s;
 `
@@ -1146,3 +1291,77 @@ const Option = styled.div`
     opacity: 1;
   }
 `
+
+const EditButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+  margin-top: 2em;
+`
+
+const EditButton = styled.button`
+  background-color: black;
+  border: none;
+  border-radius: 1em;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  &:hover {
+    background-color: #FDC649;
+  }
+`
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid black;
+  border-radius: 1em;
+`;
+
+const Label = styled.label`
+  font-weight: bold;
+  margin: 1em;
+  width: 90%;
+  text-align: left;
+`;
+
+const Input = styled.input`
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 90%;
+  margin: 0;
+
+  &[type="color"] {
+    padding: 0;
+    height: 40px;
+  }
+`;
+
+const Select = styled.select`
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 90%;
+`;
+
+const Button = styled.button`
+  padding: 10px 15px;
+  background-color:rgb(12, 12, 12);
+  color: white;
+  border: none;
+  margin: 1em;
+  width: 50%;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color:rgb(232, 197, 41);
+  }
+`;

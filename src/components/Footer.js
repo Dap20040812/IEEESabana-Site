@@ -1,4 +1,7 @@
-import { Facebook, Instagram, MailOutline, Phone, Pinterest, Room, Twitter} from '@material-ui/icons'
+import { RiInstagramFill } from "react-icons/ri";
+import { IoMdMail } from "react-icons/io";
+import { IoIosPhonePortrait } from "react-icons/io";
+import { IoLocationSharp } from "react-icons/io5";
 import React from 'react'
 import styled from 'styled-components'
 
@@ -11,8 +14,8 @@ function Footer() {
             
             </Description>
             <SocialContainer>
-                <SocialIcon color='#e4405f'>
-                    <a href='https://www.instagram.com/rama_estudiantil_unisabana/'><Instagram/></a>
+                <SocialIcon>
+                    <a href='https://www.instagram.com/rama_estudiantil_unisabana/'><InstagramIcon/></a>
                 </SocialIcon>
             </SocialContainer>
         </Left>
@@ -21,16 +24,16 @@ function Footer() {
                 Contact
             </Title>
             <ContactItem>
-                <Room style={{marginRight:'10px'}} />
+                <IoLocationSharp/>
                 Km. 7, Autopista Norte de Bogotá. Chía, Cundinamarca
             </ContactItem>
             <ContactItem>
-                <Phone style={{marginRight:'10px'}} />
-                +57 320 9728244
+                <IoIosPhonePortrait />
+                +57 320 9303628
             </ContactItem>
             <ContactItem>
-                <MailOutline style={{marginRight:'10px'}} />
-                nataliamapr@ieee.org
+                <IoMdMail/>
+                ritatrcr@unisabana.edu.co
             </ContactItem>
         </Right>
     </Container>
@@ -38,6 +41,10 @@ function Footer() {
 }
 
 export default Footer
+
+const InstagramIcon = styled(RiInstagramFill)`
+  font-size: 2em; // Cambia el tamaño según tus necesidades
+`;
 
 const Container = styled.div `
     color: white;
@@ -89,8 +96,8 @@ const SocialContainer = styled.div `
 
 const SocialIcon = styled.div `
     display: flex;
-    width: 40px;
-    height: 40px;
+    width: 4em;
+    height: 4em;
     border-radius: 50%;
     color: white;
     background-color: ${props => props.color};
@@ -127,5 +134,6 @@ const ContactItem = styled.div `
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5em;
 
 `
